@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Semantic Controller V1.2 (Knowledge Base)
+
+A high-performance, brutalist-styled Retrieval-Augmented Generation (RAG) pipeline built with Next.js, Voyage AI, and MongoDB Atlas Vector Search.
+
+## Features
+
+- **Semantic Search Engine**: Talk to your data using advanced vector embeddings powered by Voyage AI (`voyage-3`).
+- **Multi-Format Document Ingestion**: Upload `.txt`, `.md`, and `.pdf` files. Documents are automatically cleaned, chunked, and vectorized.
+- **MongoDB Atlas Vector Search**: Fast and scalable semantic retrieval using MongoDB's `$vectorSearch` and `$search` aggregation pipelines.
+- **Brutalist UI Aesthetic**: A highly minimal, terminal-inspired interface built with Tailwind CSS, featuring high-contrast monochrome design and sharp typography.
+- **Citation Tracking**: Responses include interactive, inline reference tags `[REF X]` that trace back to the exact source chunks retrieved from your uploaded documents.
+
+## Tech Stack
+
+- **Framework**: [Next.js](https://nextjs.org/) (App Router)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Database**: [MongoDB Atlas](https://www.mongodb.com/products/platform/atlas-vector-search)
+- **Embeddings**: [Voyage AI](https://www.voyageai.com/)
+- **PDF Processing**: `pdf2json`
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Node.js
+- MongoDB Atlas cluster with Vector Search indexes configured
+- Voyage AI API Key
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Installation
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/AnkurRam2002/RAG-Pipeline.git
+   cd RAG-Pipeline
+   ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Configure Environment Variables:
+   Create a `.env.local` file in the root directory:
+   ```env
+   MONGODB_URI=your_mongodb_connection_string
+   VOYAGE_API_KEY=your_voyage_api_key
+   CHUNK_SIZE=500
+   CHUNK_OVERLAP=50
+   ```
 
-## Learn More
+4. Run the development server:
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000) to view the interface.
 
-To learn more about Next.js, take a look at the following resources:
+## Usage
+1. Drag and drop your reference documents (`.txt`, `.md`, or `.pdf`) into the designated upload zone.
+2. Wait for the system to process, chunk, and embed the text into the MongoDB knowledge base.
+3. Use the command interface at the bottom of the screen to query your uploaded knowledge base.
+4. Click on `[REF]` tags in the chat to view the exact chunk of text the system used to generate the response.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Architecture Pipeline
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **Ingestion**: `FileUploader.tsx` sends raw files to the `/api/ingest` route.
+2. **Processing**: Text is cleaned (`lib/cleaner.ts`) and split into overlapping chunks (`lib/chunker.ts`).
+3. **Embedding**: Chunks are embedded via the Voyage AI API (`lib/voyage.ts`).
+4. **Storage**: Vectors and metadata are stored in MongoDB (`lib/mongodb.ts`).
+5. **Retrieval**: User queries are embedded and compared against the database using MongoDB Atlas Vector Search.
+6. **Generation**: Top results are returned and displayed in the `ChatWindow.tsx` alongside the original chunks for verification.
