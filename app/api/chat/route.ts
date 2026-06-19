@@ -5,6 +5,7 @@ import clientPromise from "@/lib/mongodb";
 import { embed } from "@/lib/voyage";
 import { Chunk } from "@/lib/types";
 import { rateLimit } from "@/lib/rate-limit";
+import { getSystemPrompt } from "@/lib/prompts";
 
 async function hybridSearch(query: string, userId: string, topK = 5) {
   const client = await clientPromise;
@@ -107,13 +108,7 @@ async function streamGemini(contextString: string, message: string, controller: 
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
   const model = genAI.getGenerativeModel({ 
     model: "gemini-2.5-flash",
-    systemInstruction: `You are a document assistant. Answer using ONLY the context below.
-Cite sources inline as [1], [2], etc. matching the context numbers.
-If the answer is not present in the context, say so explicitly.
-At the very end of your response, add a '### Sources' section and list the files you referenced like '- [1] filename'.
-
-Context:
-${contextString}`
+    systemInstruction: getSystemPrompt(contextString)
   });
   const result = await model.generateContentStream(message);
   for await (const chunk of result.stream) {
@@ -128,13 +123,7 @@ async function streamGroq(contextString: string, message: string, controller: Re
     messages: [
       { 
         role: "system", 
-        content: `You are a document assistant. Answer using ONLY the context below.
-Cite sources inline as [1], [2], etc. matching the context numbers.
-If the answer is not present in the context, say so explicitly.
-At the very end of your response, add a '### Sources' section and list the files you referenced like '- [1] filename'.
-
-Context:
-${contextString}`
+        content: getSystemPrompt(contextString)
       },
       { role: "user", content: message }
     ],

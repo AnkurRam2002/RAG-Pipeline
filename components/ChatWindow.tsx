@@ -148,7 +148,7 @@ export default function ChatWindow({ userId }: { userId: string }) {
             
             <div className={`p-4 md:p-5 ${
               msg.role === "user"
-                ? "bg-white text-black border border-white"
+                ? "bg-[#2a2a2a] text-white border border-[#444]"
                 : "bg-[#1a1a1a] border border-[#333] text-gray-200 prose prose-invert prose-p:leading-relaxed max-w-none"
             }`}>
               {msg.role === "assistant" ? (

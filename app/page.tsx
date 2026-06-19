@@ -6,7 +6,7 @@ export default function Home() {
   const userId = "dev-user"; 
 
   return (
-    <main className="min-h-screen p-4 md:p-8 bg-[#111111] text-gray-100 font-sans flex items-center justify-center">
+    <main className="min-h-screen p-4 md:p-8 bg-[#111111] text-gray-100 font-mono flex items-center justify-center">
       <div className="w-full max-w-6xl mx-auto glass-panel p-6 md:p-10 my-4 border-t-2 border-t-white">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between border-b border-[#333] pb-4 mb-10 gap-4">
           <div>
